@@ -15,7 +15,7 @@ yamrServices.factory('MovieRest', ['$resource', 'yamrServices.config',
 yamrServices.factory('TopRatedRest', ['$resource', 'yamrServices.config',
     function ($resource, config) {
         return $resource(config.basePath + 'movies/top_rated', {}, {
-            query: {method: 'GET', isArray: true}
+            query: {method: 'GET', isArray: false}
         });
     }
 ]);
