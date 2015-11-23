@@ -36,6 +36,12 @@ def movie_detail(movieId):
     return jsonify(movie)
 
 
+@app.route('/api/movies/top_rated')
+def top_rated():
+    movies = db.find_top_rated()
+    return jsonify(items=movies)
+
+
 @app.route('/api/search')
 def search():
     query = str(request.args.get('query'))

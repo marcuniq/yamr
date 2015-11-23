@@ -4,6 +4,13 @@ import graphlab as gl
 import graphlab.aggregate as agg
 
 
+def sframe_to_list(sframe, nb_elem):
+    l = []
+    for i in xrange(nb_elem):
+        l += [sframe[i]]
+
+    return l
+
 class Database(object):
     def __init__(self, dataset_path):
         self.dataset_path = dataset_path
@@ -51,7 +58,10 @@ class Database(object):
                                                                           'mean_rating': agg.MEAN('rating')})
         top_rated = grouped[grouped['count'] > min_count].sort('mean_rating', False)[:top_k]
 
-        return top_rated.join(self.movies, on='movieId', how='inner').sort('mean_rating', False)
+        tr_joined = top_rated.join(self.movies, on='movieId', how='inner').sort('mean_rating', False)
+
+        # hack to convert SFrame to list of dict
+        return sframe_to_list(tr_joined, top_k)
 
     def search(self, query, top_k=20):
         query_re = '.*{}.*'.format(query)
@@ -60,8 +70,4 @@ class Database(object):
         top_k = min(top_k, found_movies.shape[0])
 
         # hack to convert SFrame to list of dict
-        movies = []
-        for i in xrange(top_k):
-            movies += [found_movies[i]]
-
-        return movies
+        return sframe_to_list(found_movies, top_k)
