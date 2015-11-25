@@ -1,15 +1,36 @@
 var yamrControllers = angular.module('yamrControllers', []);
 
-yamrControllers.controller('IndexController', ['$scope', 'TopRatedRest',
-    function ($scope, TopRatedRest) {
+yamrControllers.controller('IndexController', ['$scope', 'TopRatedRest','RatingService',
+    function ($scope, TopRatedRest, ratingService) {
         TopRatedRest.query(function(response){
             $scope.topRated = response.items;
         });
+
+        $scope.getRatings = function(){
+            return ratingService.ratings();
+        };
+
+        $scope.addRating = function(movie) {
+            console.debug('add rating');
+            ratingService.addRating(movie);
+        };
     }
 ]);
 
 yamrControllers.controller('MovieDetailController', ['$scope', '$routeParams', 'MovieRest',
     function ($scope, $routeParams, MovieRest) {
         $scope.movie = MovieRest.get({movieId: $routeParams.movieId});
+    }
+]);
+
+yamrControllers.controller('RatingsController', ['$scope', 'RatingService',
+    function($scope, ratingService){
+        $scope.getRatings = function(){
+            return ratingService.ratings();
+        };
+
+        $scope.addRating = function(movie) {
+            ratingService.addRating(movie);
+        };
     }
 ]);
