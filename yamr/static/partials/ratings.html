@@ -1,5 +1,5 @@
 <div class="container">
-    <div ng-repeat="movie in topRated | orderBy: 'rating.avg':true ">
+    <div ng-repeat="movie in getRatings() | orderBy: 'rating.avg':true ">
         <h4><a href="#/movies/{{ movie.movieId }}">{{ movie.title }}</a></h4>
         <img ng-src="{{ movie.poster }}" ng-click="addRating(movie)"/>
     </div>
