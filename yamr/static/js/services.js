@@ -4,7 +4,7 @@ angular.module('yamrServices.config', [])
         basePath: '/' //http://private-66bc5-yamr.apiary-mock.com/' // Set your base path here
     });
 
-var yamrServices = angular.module('yamrServices', ['ngResource', 'yamrServices.config']);
+var yamrServices = angular.module('yamrServices', ['ngResource', 'yamrServices.config', 'ngStorage']);
 
 yamrServices.factory('MovieRest', ['$resource', 'yamrServices.config',
     function ($resource, config) {
@@ -36,23 +36,25 @@ yamrServices.factory('RecommenderRest', ['$resource', 'yamrServices.config',
     }
 ]);
 
-yamrServices.factory('RatingService', function(){
-    var data = [];
+yamrServices.factory('RatingService',
+    function($localStorage){
+        $localStorage.ratings = $localStorage.ratings || [];
 
-    return {
-        ratings:function () {
-            // This exposed private data
-            return data;
-        },
-        addRating:function (movie) {
-            // This is a public function that modifies private data
-            data.push(movie);
-        },
-        deleteRating:function (movieId) {
-            // This is a public function that modifies private data
-            data = data.filter(function(el){
-                return el.movieId != movieId;
-            });
-        }
-    };
-});
+        return {
+            ratings:function () {
+                // This exposed private data
+                return $localStorage.ratings;
+            },
+            addRating:function (movie) {
+                // This is a public function that modifies private data
+                $localStorage.ratings.push(movie);
+            },
+            deleteRating:function (movieId) {
+                // This is a public function that modifies private data
+                $localStorage.ratings = $localStorage.ratings.filter(function(el){
+                    return el.movieId != movieId;
+                });
+            }
+        };
+    }
+);
