@@ -34,7 +34,7 @@ except:
     enhanced.export_csv('datasets\\ml-latest-enhanced\\movies.csv')
 
 not_yet_enhanced_movies = original.movies.filter_by(enhanced['movieId'], 'movieId', exclude=True)
-not_yet_enhanced_movies, dropped_movies = not_yet_enhanced_movies.dropna_split(columns='tmdb.id')
+not_yet_enhanced_movies, dropped_movies = not_yet_enhanced_movies.dropna_split(columns='tmdbId')
 
 # create client & view
 rc = Client()
@@ -62,7 +62,7 @@ for chunk in chunks(not_yet_enhanced_movies, 16):
 
 movies_have_year, movies_no_year = enhanced.dropna_split(columns='year')
 for movie in movies_no_year:
-    info = tmdbsimple.Movies(movie['tmdb.id']).info()
+    info = tmdbsimple.Movies(movie['tmdbId']).info()
     year = dateutil.parser.parse(info['release_date']).year
     movie['year'] = long(year)
     movie = map(util.map_dict_list, [movie])[0]

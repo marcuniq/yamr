@@ -70,7 +70,7 @@ class RecommendationEngine(object):
 
         recommendations = self.dataset.movies.join(recommendations, on='movieId')
 
-        recommendations = recommendations[recommendations['rating.count'] > min_count]
+        recommendations = recommendations[recommendations['ratingCount'] > min_count]
 
         if 'filter' in request_data:
             filtered = recommendations\

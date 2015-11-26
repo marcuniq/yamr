@@ -47,14 +47,11 @@ class OriginalDataset(object):
         movies['imdb'] = movies['imdbId'].apply(lambda imdb_id: 'http://www.imdb.com/title/tt{}/'.format(imdb_id))
         movies.remove_column('imdbId')
 
-        movies['tmdb.id'] = movies['tmdbId']
-        movies.remove_column('tmdbId')
-
         return movies
 
     def _calc_avg_rating_per_movie(self, ratings):
         return ratings.groupby(key_columns='movieId',
-                               operations={'rating.count': agg.COUNT(), 'rating.avg': agg.AVG('rating')})
+                               operations={'ratingCount': agg.COUNT(), 'ratingAvg': agg.AVG('rating')})
 
     def find_movie_by_id(self, movieId):
         movie = self.movies.filter_by(movieId, 'movieId')
@@ -64,7 +61,7 @@ class OriginalDataset(object):
         if not top_k:
             top_k = 20
 
-        top_rated = self.movies[self.movies['rating.count'] > min_count].sort('rating.avg', False)
+        top_rated = self.movies[self.movies['ratingCount'] > min_count].sort('ratingAvg', False)
 
         # hack to convert SFrame to list of dict
         return util.sframe_to_list(top_rated, top_k)

@@ -15,7 +15,7 @@
     <table><tr><td>
         <h1>Top rated</h1>
     </td></tr></table>
-    <div class="row" ng-repeat="row in topRated | orderBy: 'rating.avg':true | chunkBy: 5" >
+    <div class="row" ng-repeat="row in topRated | orderBy: 'ratingAvg':true | chunkBy: 5" >
         <div class="col-md-2" ng-repeat="movie in row">
             <h4><a href="#/movies/{{ movie.movieId }}">{{ movie.title }}</a></h4>
             <img ng-src="{{ movie.poster }}" ng-click="addRating(movie)"/>
