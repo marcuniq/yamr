@@ -1,4 +1,4 @@
-var yamrApp = angular.module('yamrApp', ['ngRoute', 'ngResource', 'yamrControllers', 'yamrServices']);
+var yamrApp = angular.module('yamrApp', ['ngRoute', 'ngResource', 'yamrControllers', 'yamrServices', 'yamrFilters']);
 
 yamrApp.config(['$routeProvider',
     function ($routeProvider) {

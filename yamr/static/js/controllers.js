@@ -1,14 +1,22 @@
 var yamrControllers = angular.module('yamrControllers', []);
 
-yamrControllers.controller('IndexController', ['$scope', 'TopRatedRest','RatingService',
-    function ($scope, TopRatedRest, ratingService) {
+yamrControllers.controller('IndexController', ['$scope', 'TopRatedRest','RatingService', 'SearchRest',
+    function ($scope, TopRatedRest, ratingService, SearchRest) {
+
+        $scope.search = function() {
+
+            SearchRest.get({query: $scope.query}, function(response){
+                $scope.searchResults = response.items;
+                console.debug(response);
+            });
+        }
         TopRatedRest.query(function(response){
             $scope.topRated = response.items;
         });
 
         $scope.getRatings = function(){
             return ratingService.ratings();
-        };
+        }
 
         $scope.addRating = function(movie) {
             console.debug('add rating');

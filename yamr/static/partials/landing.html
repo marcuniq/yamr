@@ -1,6 +1,18 @@
 <div class="container">
-    <div ng-repeat="movie in topRated | orderBy: 'rating.avg':true ">
+    <input ng-model="query"><input type="button" ng-click="search()">
+
+    <div class="searchResults">
+        <div class="row" ng-repeat="row in filtered = (searchResults | splitArrayFilter:4)">
+            <div class="col-md-3" ng-repeat="movie in row">
+                <h4><a href="#/movies/{{ movie.movieId }}">{{ movie.title }}</a></h4>
+                <img ng-src="{{ movie.poster }}" ng-click="addRating(movie)"/>
+            </div>
+        </div>
+    </div>
+
+
+    <!--<div ng-repeat="movie in topRated | orderBy: 'rating.avg':true ">
         <h4><a href="#/movies/{{ movie.movieId }}">{{ movie.title }}</a></h4>
         <img ng-src="{{ movie.poster }}" ng-click="addRating(movie)"/>
-    </div>
+    </div>-->
 </div><!-- /.container -->
