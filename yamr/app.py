@@ -39,7 +39,18 @@ def movie_detail(movieId):
 
 @app.route('/api/movies/top_rated')
 def top_rated():
-    movies = ds.find_top_rated(top_k=20)
+    top_k = request.args.get('top_k')
+    top_k = int(request.args.get('top_k')) if top_k else None
+    movies = ds.find_top_rated(top_k=top_k)
+    movies = map(lambda m: extend_movie_info(m), movies)
+    return jsonify(items=movies)
+
+
+@app.route('/api/movies/random')
+def random():
+    top_k = request.args.get('top_k')
+    top_k = int(request.args.get('top_k')) if top_k else None
+    movies = ds.get_random(top_k=top_k)
     movies = map(lambda m: extend_movie_info(m), movies)
     return jsonify(items=movies)
 
@@ -47,7 +58,9 @@ def top_rated():
 @app.route('/api/search')
 def search():
     query = str(request.args.get('query'))
-    movies = ds.search(query)
+    top_k = request.args.get('top_k')
+    top_k = int(request.args.get('top_k')) if top_k else None
+    movies = ds.search(query, top_k=top_k)
     movies = map(lambda m: extend_movie_info(m), movies)
     return jsonify(items=movies)
 

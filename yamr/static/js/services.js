@@ -20,6 +20,12 @@ yamrServices.factory('TopRatedRest', ['$resource', 'yamrServices.config',
     }
 ]);
 
+yamrServices.factory('RandomRest', ['$resource', 'yamrServices.config',
+    function ($resource, config) {
+        return $resource(config.basePath + 'api/movies/random');
+    }
+]);
+
 yamrServices.factory('SearchRest', ['$resource', 'yamrServices.config',
     function ($resource, config) {
         return $resource(config.basePath + 'api/search', {}, {
