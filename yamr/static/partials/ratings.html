@@ -1,6 +1,8 @@
 <div class="container">
-    <div ng-repeat="movie in getRatings() | orderBy: 'rating.avg':true ">
-        <h4><a href="#/movies/{{ movie.movieId }}">{{ movie.title }}</a></h4>
-        <img ng-src="{{ movie.poster }}" ng-click="addRating(movie)"/>
+    <div class="row" ng-repeat="row in getRatings() | orderBy: 'rating.avg':true | chunkBy: 5" >
+        <div class="col-md-2" ng-repeat="movie in row">
+            <h4><a href="#/movies/{{ movie.movieId }}">{{ movie.title }}</a></h4>
+            <img ng-src="{{ movie.poster }}" ng-click="addRating(movie)"/>
+        </div>
     </div>
 </div><!-- /.container -->
