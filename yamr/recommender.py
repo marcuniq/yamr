@@ -1,48 +1,85 @@
-import os
-import re
 import graphlab as gl
+import time
+import util
 
-sf = gl.SFrame({'user_id': ["0", "0", "0", "1", "1", "2", "2", "2"],
-                      'item_id': ["a", "b", "c", "a", "b", "b", "c", "d"],
-                      'rating': [1, 3, 2, 5, 4, 1, 4, 3]})
 
-model = gl.recommender.create(sf, target='rating')
+class Recommender(object):
+    def train(self, data, user_id='userId', item_id='movieId', target='rating', item_data=None):
+        return gl.recommender.create(data, user_id=user_id, item_id=item_id, target=target, item_data=item_data)
 
-recs = model.recommend()
-print recs
 
-model.save('model_file')
+class ItemSimilarityRecommender(Recommender):
+    def train(self, data, user_id='userId', item_id='movieId', target='rating',  item_data=None):
+        return gl.recommender.item_similarity_recommender.create(data, user_id=user_id, item_id=item_id, target=target, item_data=item_data)
+
+
+class FactorizationRecommender(Recommender):
+    def train(self, data, user_id='userId', item_id='movieId', target='rating',  item_data=None):
+        return gl.recommender.factorization_recommender.create(data, user_id=user_id, item_id=item_id, target=target, item_data=item_data)
+
+
+class PopularityRecommender(Recommender):
+    def train(self, data, user_id='userId', item_id='movieId', target='rating', item_data=None):
+        return gl.recommender.popularity_recommender.create(data, user_id=user_id, item_id=item_id, target=target, item_data=item_data)
 
 
 class RecommendationEngine(object):
-    def __init__(self, dataset_path, train_model=False):
-        self.dataset_path = dataset_path
+    def __init__(self, dataset, recommender=None, train_model=False):
+        self.dataset = dataset
+        self.model = None
 
-        self.__set_movies()
+        if not recommender:
+            recommender = Recommender()
+
+        self.recommender = recommender
 
         if train_model:
-            self.__train_model()
+            self.train_model()
 
-    def __set_movies(self):
-        movies_path = os.path.join(self.dataset_path, 'movies.csv')
-        movies = gl.SFrame(data=movies_path)
+    @util.timing
+    def load_model(self, fpath):
+        self.model = gl.load_model(fpath)
 
-        def get_year(title):
-            m = re.search(r'\d\d\d\d', title)
-            if m:
-                return int(m.group())
-            else:
-                print title
+    @util.timing
+    def train_model(self):
+        item_info = self.dataset.movies.select_columns(['movieId', 'genres', 'year'])
+        self.model = self.recommender.train(self.dataset.ratings, user_id='userId', item_id='movieId', target='rating', item_data=item_info)
+        return self.model
 
-        movies['year'] = movies['title'].apply(get_year)
-        movies['title'] = movies['title'].apply(lambda t: t.split('(')[0])
-        movies['genres'] = movies['genres'].apply(lambda s: s.split('|'))
-        self.movies = movies
+    @util.timing
+    def save_model(self, fpath):
+        if self.model:
+            self.model.save(fpath)
 
+    @util.timing
+    def get_recommendations(self, request_data, top_k=None, min_count=10):
+        if not top_k:
+            top_k = 20
 
-    def __train_model(self):
-        ratings_path = os.path.join(self.dataset_path, 'ratings.csv')
-        self.ratings = gl.SFrame(data=ratings_path)
-        self.model = gl.recommender.create(self.ratings, user_id='userId', item_id='movieId', target='rating')
+        mapped = map(util.map_dict_value_as_array, request_data['ratings'])
+        reduced = reduce(util.merge_two_dicts, mapped)
 
-    def get_recommendations(self, movie_ratings):
+        nb_ratings = len(reduced['movieId'])
+
+        reduced['userId'] = [999999 for x in range(nb_ratings)]
+        reduced['timestamp'] = [int(time.time()) for x in range(nb_ratings)]
+
+        reduced = gl.SFrame(reduced)
+
+        recommendations = self.model.recommend(users=[999999], k=500, new_observation_data=reduced)
+
+        recommendations = self.dataset.movies.join(recommendations, on='movieId')
+
+        recommendations = recommendations[recommendations['rating.count'] > min_count]
+
+        if 'filter' in request_data:
+            filtered = recommendations\
+                .flat_map(['genres', 'movieId'],
+                          lambda x: [[g, x['movieId']] for g in x['genres'] for i in range(0, len(x['genres']))])\
+                .filter_by(request_data['filter'], 'genres')
+
+            recommendations = recommendations.filter_by(filtered['movieId'], 'movieId')
+
+        recommendations = recommendations.remove_column('userId')
+
+        return util.sframe_to_list(recommendations, top_k)

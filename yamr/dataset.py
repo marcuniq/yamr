@@ -1,21 +1,8 @@
 import os
 import re
-import random
 import graphlab as gl
 import graphlab.aggregate as agg
-
-
-def sframe_to_list(sframe, nb_elem=None):
-    if nb_elem:
-        nb_elem = min(nb_elem, sframe.shape[0])
-    else:
-        nb_elem = sframe.shape[0]
-
-    l = []
-    for i in xrange(nb_elem):
-        l += [sframe[i]]
-
-    return l
+import util
 
 
 class OriginalDataset(object):
@@ -80,18 +67,18 @@ class OriginalDataset(object):
         top_rated = self.movies[self.movies['rating.count'] > min_count].sort('rating.avg', False)
 
         # hack to convert SFrame to list of dict
-        return sframe_to_list(top_rated, top_k)
+        return util.sframe_to_list(top_rated, top_k)
 
-    def get_random(self, top_k=20):
+    def get_random(self, top_k):
         if not top_k:
             top_k = 20
 
         sampled_movies = self.movies.sample(0.01)
 
         # hack to convert SFrame to list of dict
-        return sframe_to_list(sampled_movies, top_k)
+        return util.sframe_to_list(sampled_movies, top_k)
 
-    def search(self, query, top_k=20):
+    def search(self, query, top_k):
         if not top_k:
             top_k = 20
 
@@ -100,7 +87,7 @@ class OriginalDataset(object):
         found_movies = self.movies[self.movies['title'].apply(lambda t: 1 if p.match(t) else 0)]
 
         # hack to convert SFrame to list of dict
-        return sframe_to_list(found_movies, top_k)
+        return util.sframe_to_list(found_movies, top_k)
 
 
 class EnhancedDataset(OriginalDataset):

@@ -1,60 +1,18 @@
 import tmdbsimple
-from yamr.dataset import OriginalDataset, sframe_to_list
 import graphlab as gl
 from ipyparallel import Client
 import time
+import dateutil
+from yamr.dataset import OriginalDataset
+import tmdb_util
+import util
 
+"""
+    before running this script, do
 
-def get_tmdb_info(movie):
-    if movie['tmdb.id'] is not None:
-        result = {}
-        try:
-            info = tmdbsimple.Movies(movie['tmdb.id']).info()
-
-            result['movieId'] = [movie['movieId']]
-            result['tmdb.poster_path'] = [str(info['poster_path']) if info['poster_path'] else None]
-            result['tmdb.title'] = [unicodedata.normalize('NFKD', info['title']).encode('ascii', 'ignore') if info['title'] else None]
-            result['tmdb.overview'] = [unicodedata.normalize('NFKD', info['overview']).encode('ascii', 'ignore') if info['overview'] else None]
-        except:
-            print ""
-
-        return result
-
-
-def merge_two_dicts(x, y):
-
-    if x:
-        for k, v in x.iteritems():
-            if type(v) != list:
-                x[k] = [v]
-    else:
-        x = {}
-
-    if y:
-        for k, v in y.iteritems():
-            if k not in x:
-                x[k] = []
-            if type(v) != list:
-                x[k] += [v]
-            else:
-                x[k] += v
-
-    return x
-
-
-def save_tmdb_info(dict_tmdb_info, original, enhanced):
-    sf_tmdb_info = gl.SFrame(dict_tmdb_info)
-    movie_enhanced = original.movies.join(sf_tmdb_info, on='movieId')
-
-    enhanced = enhanced.append(movie_enhanced)
-    enhanced.export_csv('datasets\\ml-latest-enhanced\\movies.csv')
-
-
-def get_and_save_tmdb_info(movie):
-    dict_tmdb_info = get_tmdb_info(movie)
-
-    if dict_tmdb_info:
-        save_tmdb_info(dict_tmdb_info, original, enhanced)
+    activate dato-env
+    ipcluster start -n 4
+"""
 
 
 def chunks(l, n):
@@ -70,7 +28,7 @@ try:
     enhanced = gl.SFrame(data='datasets/ml-latest-enhanced/movies.csv')
 except:
     import unicodedata
-    init_tmdb_info = get_tmdb_info(original.movies[0])
+    init_tmdb_info = tmdb_util.get_tmdb_info(original.movies[0])
     sf_tmdb_info = gl.SFrame(init_tmdb_info)
     enhanced = original.movies.join(sf_tmdb_info, on='movieId')
     enhanced.export_csv('datasets\\ml-latest-enhanced\\movies.csv')
@@ -90,11 +48,25 @@ with dv.sync_imports():
 
 for chunk in chunks(not_yet_enhanced_movies, 16):
     print "chunk starting with movieId %d" % chunk[0]['movieId']
-    chunk = sframe_to_list(chunk)
-    list_tmdb_info = dv.map_sync(get_tmdb_info, chunk)
-    dict_tmdb_info = reduce(merge_two_dicts, list_tmdb_info)
+    chunk = util.sframe_to_list(chunk)
+    list_tmdb_info = dv.map_sync(tmdb_util.get_tmdb_info, chunk)
+    mapped_tmdb_info = map(util.map_dict_list, list_tmdb_info)
+    dict_tmdb_info = reduce(util.merge_two_dicts, mapped_tmdb_info)
+    if len(dict_tmdb_info) == 0:
+        break
     sf_tmdb_info = gl.SFrame(dict_tmdb_info)
     movie_enhanced = original.movies.join(sf_tmdb_info, on='movieId')
     enhanced = enhanced.append(movie_enhanced)
     enhanced.export_csv('datasets\\ml-latest-enhanced\\movies.csv')
     time.sleep(3)
+
+movies_have_year, movies_no_year = enhanced.dropna_split(columns='year')
+for movie in movies_no_year:
+    info = tmdbsimple.Movies(movie['tmdb.id']).info()
+    year = dateutil.parser.parse(info['release_date']).year
+    movie['year'] = long(year)
+    movie = map(util.map_dict_list, [movie])[0]
+    movies_have_year = movies_have_year.append(gl.SFrame(movie))
+
+movies_have_year.export_csv('datasets\\ml-latest-enhanced\\movies.csv')
+print "finished"
