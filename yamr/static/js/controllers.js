@@ -10,6 +10,7 @@ yamrControllers.controller('IndexController', ['$scope', 'TopRatedRest','RatingS
                 console.debug(response);
             });
         }
+
         TopRatedRest.query(function(response){
             $scope.topRated = response.items;
         });
