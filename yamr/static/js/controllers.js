@@ -1,11 +1,13 @@
 var yamrControllers = angular.module('yamrControllers', []);
 
-yamrControllers.controller('IndexController', ['$scope', 'TopRatedRest','RatingService',
-    function ($scope, TopRatedRest, ratingService) {
+yamrControllers.controller('IndexController', ['$scope', 'TopRatedRest', 'RandomRest', 'RatingService',
+    function ($scope, TopRatedRest, RandomRest, ratingService) {
         TopRatedRest.query(function(response){
             $scope.topRated = response.items;
         });
-
+        RandomRest.get(function(response){
+            $scope.random = response.items;
+        });
         $scope.getRatings = function(){
             return ratingService.ratings();
         };

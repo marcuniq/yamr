@@ -1,6 +1,15 @@
 <div class="container">
+
+    <h1>Top rated</h1>
     <div ng-repeat="movie in topRated | orderBy: 'rating.avg':true ">
         <h4><a href="#/movies/{{ movie.movieId }}">{{ movie.title }}</a></h4>
         <img ng-src="{{ movie.poster }}" ng-click="addRating(movie)"/>
     </div>
+
+    <h1>Random</h1>
+    <div ng-repeat="movie in random">
+        <h4><a href="#/movies/{{ movie.movieId }}">{{ movie.title }}</a></h4>
+        <img ng-src="{{ movie.poster }}" ng-click="addRating(movie)"/>
+    </div>
+
 </div><!-- /.container -->
