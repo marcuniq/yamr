@@ -51,49 +51,47 @@ yamrServices.factory('RatingService',
             $localStorage.ratings = [];
         }
 
-        var find_by_id = function (movieId) {
+        var findById = function (movieId) {
             return function (element, index, array) {
                 return element.movieId == movieId;
             };
         };
-
-        return {
-            ratings: function () {
-                // This exposed private data
-                return $localStorage.ratings;
-            },
-            addRating: function (movie) {
-                // This is a public function that modifies private data
-                var ratedMovie = $localStorage.ratings.find(find_by_id(movie.movieId));
-                if (ratedMovie != undefined) {
-                    ratingService.deleteRating(movie.movieId);
-                }
-                movie.ratingTimestamp = new Date().getTime();
-                $localStorage.ratings.push(movie);
-            },
-            deleteRating: function (movieId) {
-                // This is a public function that modifies private data
-                $localStorage.ratings = $localStorage.ratings.filter(function (el) {
-                    return el.movieId != movieId;
-                });
-            },
-            joinRatings: function (unratedMovies) {
-                return unratedMovies.map(function (movie) {
-                    var ratedMovie = $localStorage.ratings.find(find_by_id(movie.movieId));
-                    if (ratedMovie != undefined) {
-                        movie.rating = ratedMovie.rating;
-                    }
-                    return movie;
-                });
-            }
+        ratingService.ratings = function () {
+            // This exposed private data
+            return $localStorage.ratings;
         };
+        ratingService.deleteRating = function (movieId) {
+            // This is a public function that modifies private data
+            $localStorage.ratings = $localStorage.ratings.filter(function (el) {
+                return el.movieId != movieId;
+            });
+        };
+        ratingService.addRating = function (movie) {
+            // This is a public function that modifies private data
+            var ratedMovie = $localStorage.ratings.find(findById(movie.movieId));
+            if (ratedMovie != undefined) {
+                ratingService.deleteRating(movie.movieId);
+            }
+            movie.ratingTimestamp = new Date().getTime();
+            $localStorage.ratings.push(movie);
+        };
+        ratingService.joinRatings = function (unratedMovies) {
+            return unratedMovies.map(function (movie) {
+                var ratedMovie = $localStorage.ratings.find(findById(movie.movieId));
+                if (ratedMovie != undefined) {
+                    movie.rating = ratedMovie.rating;
+                }
+                return movie;
+            });
+        };
+        return ratingService;
     }
 );
 
 yamrServices.factory('PosterService', ['yamrServices.config',
-    function(config) {
+    function (config) {
         return {
-            getUrl: function(imgPath, size){
+            getUrl: function (imgPath, size) {
                 if (size == 'L')
                     return config.posterLargePath + imgPath;
                 else
