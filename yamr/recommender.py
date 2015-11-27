@@ -62,7 +62,6 @@ class RecommendationEngine(object):
         nb_ratings = len(reduced['movieId'])
 
         reduced['userId'] = [999999 for x in range(nb_ratings)]
-        reduced['timestamp'] = [int(time.time()) for x in range(nb_ratings)]
 
         reduced = gl.SFrame(reduced)
 
