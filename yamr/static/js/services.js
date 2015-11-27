@@ -1,7 +1,9 @@
 // Module specific configuration
 angular.module('yamrServices.config', [])
     .value('yamrServices.config', {
-        basePath: '/' //http://private-66bc5-yamr.apiary-mock.com/' // Set your base path here
+        basePath: '/', //http://private-66bc5-yamr.apiary-mock.com/' // Set your base path here
+        posterMediumPath: 'http://image.tmdb.org/t/p/w185',
+        posterLargePath: 'http://image.tmdb.org/t/p/w342'
     });
 
 var yamrServices = angular.module('yamrServices', ['ngResource', 'yamrServices.config', 'ngStorage']);
@@ -87,3 +89,16 @@ yamrServices.factory('RatingService',
         };
     }
 );
+
+yamrServices.factory('PosterService', ['yamrServices.config',
+    function(config) {
+        return {
+            getUrl: function(imgPath, size){
+                if (size == 'L')
+                    return config.posterLargePath + imgPath;
+                else
+                    return config.posterMediumPath + imgPath;
+            }
+        };
+    }
+]);

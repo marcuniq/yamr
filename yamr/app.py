@@ -24,7 +24,6 @@ def index():
 @app.route('/api/movies/<int:movieId>')
 def movie_detail(movieId):
     movie = ds.find_movie_by_id(movieId)
-    movie = tmdb_util.add_poster(movie, size='L')
     movie = tmdb_util.add_trailer(movie)
     return jsonify(movie)
 
@@ -34,7 +33,6 @@ def top_rated():
     top_k = request.args.get('top_k')
     top_k = int(request.args.get('top_k')) if top_k else None
     movies = ds.find_top_rated(top_k=top_k)
-    movies = map(lambda m: tmdb_util.add_poster(m), movies)
     return jsonify(items=movies)
 
 
@@ -43,7 +41,6 @@ def random():
     top_k = request.args.get('top_k')
     top_k = int(request.args.get('top_k')) if top_k else None
     movies = ds.get_random(top_k=top_k)
-    movies = map(lambda m: tmdb_util.add_poster(m), movies)
     return jsonify(items=movies)
 
 
@@ -53,7 +50,6 @@ def search():
     top_k = request.args.get('top_k')
     top_k = int(request.args.get('top_k')) if top_k else None
     movies = ds.search(query, top_k=top_k)
-    movies = map(lambda m: tmdb_util.add_poster(m), movies)
     return jsonify(items=movies)
 
 
@@ -63,7 +59,6 @@ def recommend():
     top_k = int(request.args.get('top_k')) if top_k else None
     movie_ratings = util.convert_unicode_to_str(request.json)
     movies = recommender.get_recommendations(movie_ratings, top_k)
-    movies = map(lambda m: tmdb_util.add_poster(m), movies)
     return jsonify(items=movies)
 
 
