@@ -1,43 +1,33 @@
 var yamrControllers = angular.module('yamrControllers', []);
 
-yamrControllers.controller('IndexController', ['$scope', 'TopRatedRest', 'RandomRest', 'RatingService', 'SearchRest', 'PosterService',
-    function ($scope, TopRatedRest, RandomRest, ratingService, SearchRest, posterService) {
-
-        var fromResponseToScope = function (items){
-            items = ratingService.joinRatings(items);
-            items = items.map(function(movie){
-                movie.poster = posterService.getUrl(movie.tmdbPosterPath, 'M');
-                return movie;
-            });
-            return items;
-        };
+yamrControllers.controller('IndexController', ['$scope', 'TopRatedRest', 'RandomRest', 'SearchRest', 'ResponseConverterService',
+    function ($scope, TopRatedRest, RandomRest, SearchRest, responseConverter) {
         $scope.search = function () {
             SearchRest.get({query: $scope.query}, function (response) {
-                $scope.searchResults = fromResponseToScope(response.items);
+                $scope.searchResults = responseConverter.convert(response.items, 'M');
             });
         };
         TopRatedRest.query(function (response) {
-            $scope.topRated = fromResponseToScope(response.items);
+            $scope.topRated = responseConverter.convert(response.items, 'M');
         });
 
         RandomRest.get(function (response) {
-            $scope.random = fromResponseToScope(response.items);
+            $scope.random = responseConverter.convert(response.items, 'M0');
         });
     }
 ]);
 
-yamrControllers.controller('MovieDetailController', ['$scope', '$routeParams', 'MovieRest', 'RatingService', 'PosterService',
-    function ($scope, $routeParams, MovieRest, ratingService, posterService) {
+yamrControllers.controller('MovieDetailController', ['$scope', '$routeParams', 'MovieRest', 'ResponseConverterService',
+    function ($scope, $routeParams, MovieRest, responseConverter) {
         MovieRest.get({movieId: $routeParams.movieId}, function (response) {
-            var movie = ratingService.joinRatings([response])[0];
-            movie.poster = posterService.getUrl(movie.tmdbPosterPath, 'L');
+            var movie = responseConverter.convert([response], 'L')[0];
             $scope.movie = movie;
         });
     }
 ]);
 
-yamrControllers.controller('RatingsController', ['$scope', 'RatingService', 'PosterService',
-    function ($scope, ratingService, posterService) {
+yamrControllers.controller('RatingsController', ['$scope', 'RatingService', 'ResponseConverterService',
+    function ($scope, ratingService, responseConverter) {
         $scope.getRatings = function () {
             return ratingService.ratings();
         };
@@ -48,11 +38,7 @@ yamrControllers.controller('RatingsController', ['$scope', 'RatingService', 'Pos
         };
 
         $scope.getRatingsWithPoster = function(size) {
-            var ratings = ratingService.ratings();
-            ratings = ratings.map(function(movie){
-                movie.poster = posterService.getUrl(movie.tmdbPosterPath, size);
-                return movie;
-            });
+            var ratings = responseConverter.convert(ratingService.ratings(), size);
             return ratings;
         };
 
@@ -72,5 +58,18 @@ yamrControllers.controller('RatingsController', ['$scope', 'RatingService', 'Pos
             {stateOn: 'glyphicon-heart'},
             {stateOff: 'glyphicon-off'}
         ];
+    }
+]);
+
+yamrControllers.controller('RecommendController', ['$scope', 'RecommenderRest', 'RatingService', 'ResponseConverterService',
+    function($scope, recommenderRest, ratingService, responseConverter){
+
+        var movieRatings = ratingService.ratings().map(function(movie){
+            return {movieId: movie.movieId, rating: movie.rating};
+        });
+
+        recommenderRest.query({ratings: movieRatings}, function(response){
+            $scope.recommendations = responseConverter.convert(response.items, 'M');
+        });
     }
 ]);

@@ -15,6 +15,10 @@ yamrApp.config(['$routeProvider',
             templateUrl: 'static/partials/ratings.html',
             controller: 'RatingsController'
         }).
+        when('/recommendations', {
+            templateUrl: 'static/partials/recommendations.html',
+            controller: 'RecommendController'
+        }).
         otherwise({
             redirectTo: '/'
         });

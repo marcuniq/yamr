@@ -39,7 +39,7 @@ yamrServices.factory('SearchRest', ['$resource', 'yamrServices.config',
 yamrServices.factory('RecommenderRest', ['$resource', 'yamrServices.config',
     function ($resource, config) {
         return $resource(config.basePath + 'api/recommend', {}, {
-            query: {method: 'POST', params: {movieId: ''}, isArray: true}
+            query: {method: 'POST'}
         });
     }
 ]);
@@ -98,5 +98,20 @@ yamrServices.factory('PosterService', ['yamrServices.config',
                     return config.posterMediumPath + imgPath;
             }
         };
+    }
+]);
+
+yamrServices.factory('ResponseConverterService', ['RatingService', 'PosterService',
+    function(ratingService, posterService){
+        var responseConverter = this;
+        responseConverter.convert = function (items, posterSize){
+            items = ratingService.joinRatings(items);
+            items = items.map(function(movie){
+                movie.poster = posterService.getUrl(movie.tmdbPosterPath, posterSize);
+                return movie;
+            });
+            return items;
+        };
+        return responseConverter;
     }
 ]);
