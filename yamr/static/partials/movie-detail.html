@@ -1,2 +1,5 @@
 <h4><a href="#/movie/{{ movie.movieId }}">{{ movie.title }}</a></h4>
+<div ng-controller="RatingsController">
+    <uib-rating ng-model="movie.rating" ng-change="addRating(movie)" max="max" readonly="isReadonly" on-hover="hoveringOver(value)" on-leave="overStar = null" titles="['one','two','three']" aria-labelledby="default-rating"></uib-rating>
+</div>
 <iframe width="420" height="315" ng-src="{{ movie.trailer }}" frameborder="0" allowfullscreen></iframe>

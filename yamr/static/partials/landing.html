@@ -8,7 +8,10 @@
     <div class="row" ng-repeat="row in searchResults | chunkBy: 5" >
         <div class="col-md-2" ng-repeat="movie in row">
             <h4><a href="#/movies/{{ movie.movieId }}">{{ movie.title }}</a></h4>
-            <img ng-src="{{ movie.poster }}" ng-click="addRating(movie)"/>
+            <img ng-src="{{ movie.poster }}"/>
+            <div ng-controller="RatingsController">
+                <uib-rating ng-model="movie.rating" ng-change="addRating(movie)" max="max" readonly="isReadonly" on-hover="hoveringOver(value)" on-leave="overStar = null" titles="['one','two','three']" aria-labelledby="default-rating"></uib-rating>
+            </div>
         </div>
     </div>
 
@@ -19,6 +22,9 @@
         <div class="col-md-2" ng-repeat="movie in row">
             <h4><a href="#/movies/{{ movie.movieId }}">{{ movie.title }}</a></h4>
             <img ng-src="{{ movie.poster }}" ng-click="addRating(movie)"/>
+            <div ng-controller="RatingsController">
+                <uib-rating ng-model="movie.rating" ng-change="addRating(movie)" max="max" readonly="isReadonly" on-hover="hoveringOver(value)" on-leave="overStar = null" titles="['one','two','three']" aria-labelledby="default-rating"></uib-rating>
+            </div>
         </div>
     </div>
 
@@ -28,7 +34,10 @@
     <div class="row" ng-repeat="row in random | chunkBy: 5" >
         <div class="col-md-2" ng-repeat="movie in row">
             <h4><a href="#/movies/{{ movie.movieId }}">{{ movie.title }}</a></h4>
-            <img ng-src="{{ movie.poster }}" ng-click="addRating(movie)"/>
+            <img ng-src="{{ movie.poster }}"/>
+            <div ng-controller="RatingsController">
+                <uib-rating ng-model="movie.rating" ng-change="addRating(movie)" max="max" readonly="isReadonly" on-hover="hoveringOver(value)" on-leave="overStar = null" titles="['one','two','three']" aria-labelledby="default-rating"></uib-rating>
+            </div>
         </div>
     </div>
 

@@ -43,24 +43,45 @@ yamrServices.factory('RecommenderRest', ['$resource', 'yamrServices.config',
 ]);
 
 yamrServices.factory('RatingService',
-    function($localStorage){
+    function ($localStorage) {
+        var ratingService = this;
         if ($localStorage.ratings === undefined) {
             $localStorage.ratings = [];
         }
 
+        var find_by_id = function (movieId) {
+            return function (element, index, array) {
+                return element.movieId == movieId;
+            };
+        };
+
         return {
-            ratings:function () {
+            ratings: function () {
                 // This exposed private data
                 return $localStorage.ratings;
             },
-            addRating:function (movie) {
+            addRating: function (movie) {
                 // This is a public function that modifies private data
+                var ratedMovie = $localStorage.ratings.find(find_by_id(movie.movieId));
+                if (ratedMovie != undefined) {
+                    ratingService.deleteRating(movie.movieId);
+                }
+                movie.ratingTimestamp = new Date().getTime();
                 $localStorage.ratings.push(movie);
             },
-            deleteRating:function (movieId) {
+            deleteRating: function (movieId) {
                 // This is a public function that modifies private data
-                $localStorage.ratings = $localStorage.ratings.filter(function(el){
+                $localStorage.ratings = $localStorage.ratings.filter(function (el) {
                     return el.movieId != movieId;
+                });
+            },
+            joinRatings: function (unratedMovies) {
+                return unratedMovies.map(function (movie) {
+                    var ratedMovie = $localStorage.ratings.find(find_by_id(movie.movieId));
+                    if (ratedMovie != undefined) {
+                        movie.rating = ratedMovie.rating;
+                    }
+                    return movie;
                 });
             }
         };
