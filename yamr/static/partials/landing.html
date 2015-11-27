@@ -2,7 +2,7 @@
 
     <table><tr><td>
         <h1>Search:</h1>
-        <input ng-model="query" ng-change="search()" placeholder="Movie title">
+        <input ng-model="query" ng-model-options='{ debounce: 500 }' ng-change="search()" placeholder="Movie title">
     </td></tr></table>
 
     <div class="row" ng-repeat="row in searchResults | chunkBy: 5" >
