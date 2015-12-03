@@ -65,7 +65,7 @@ class RecommendationEngine(object):
 
         reduced = gl.SFrame(reduced)
 
-        recommendations = self.model.recommend(users=[999999], k=500, new_observation_data=reduced)
+        recommendations = self.model.recommend(users=[999999], k=5000, new_observation_data=reduced)
 
         recommendations = self.dataset.movies.join(recommendations, on='movieId')
 
@@ -80,5 +80,7 @@ class RecommendationEngine(object):
             recommendations = recommendations.filter_by(filtered['movieId'], 'movieId')
 
         recommendations = recommendations.remove_column('userId')
+
+        recommendations = recommendations.sort('rank')
 
         return util.sframe_to_list(recommendations, top_k)

@@ -1,5 +1,5 @@
 <div class="container">
-    <div class="row" ng-repeat="row in recommendations | orderBy: 'rank':true | chunkBy: 5" >
+    <div class="row" ng-repeat="row in recommendations | orderBy: 'rank' | chunkBy: 5" >
         <div class="col-md-2" ng-repeat="movie in row">
             <h4><a href="#/movies/{{ movie.movieId }}">{{ movie.tmdbTitle }}</a></h4>
             <img ng-src="{{ movie.poster }}"/>
