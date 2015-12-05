@@ -62,11 +62,10 @@ class RecommendationEngine(object):
         nb_ratings = len(reduced['movieId'])
 
         reduced['userId'] = [999999 for x in range(nb_ratings)]
-        reduced['timestamp'] = [int(time.time()) for x in range(nb_ratings)]
 
         reduced = gl.SFrame(reduced)
 
-        recommendations = self.model.recommend(users=[999999], k=500, new_observation_data=reduced)
+        recommendations = self.model.recommend(users=[999999], k=5000, new_observation_data=reduced)
 
         recommendations = self.dataset.movies.join(recommendations, on='movieId')
 
@@ -81,5 +80,7 @@ class RecommendationEngine(object):
             recommendations = recommendations.filter_by(filtered['movieId'], 'movieId')
 
         recommendations = recommendations.remove_column('userId')
+
+        recommendations = recommendations.sort('rank')
 
         return util.sframe_to_list(recommendations, top_k)

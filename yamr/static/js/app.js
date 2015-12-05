@@ -1,4 +1,4 @@
-var yamrApp = angular.module('yamrApp', ['ngRoute', 'ngResource', 'yamrControllers', 'yamrServices', 'angular.filter']);
+var yamrApp = angular.module('yamrApp', ['ngRoute', 'ngResource', 'yamrControllers', 'yamrServices', 'angular.filter', 'ui.bootstrap']);
 
 yamrApp.config(['$routeProvider',
     function ($routeProvider) {
@@ -14,6 +14,10 @@ yamrApp.config(['$routeProvider',
         when('/ratings', {
             templateUrl: 'static/partials/ratings.html',
             controller: 'RatingsController'
+        }).
+        when('/recommendations', {
+            templateUrl: 'static/partials/recommendations.html',
+            controller: 'RecommendController'
         }).
         when('/about', {
             templateUrl: 'static/partials/about.html',

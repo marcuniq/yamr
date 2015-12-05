@@ -1,7 +1,13 @@
 <div class="container" id="movie-details">
     <div class="row">
-        <h1>{{ movie.title }}</h1>
-        <iframe class="youtube-frame" width="640" height="360" ng-src="{{ movie.trailer }}" frameborder="0" allowfullscreen></iframe>
+<h4><a href="#/movie/{{ movie.movieId }}">{{ movie.tmdbTitle }}</a></h4>
+<img ng-src="{{ movie.poster }}"/>
+<div ng-controller="RatingsController">
+    <uib-rating ng-model="movie.rating" ng-change="addRating(movie)" max="max" readonly="isReadonly" on-hover="hoveringOver(value)" on-leave="overStar = null" titles="['one','two','three']" aria-labelledby="default-rating"></uib-rating>
+</div>
+<p>{{ movie.tmdbOverview }}</p>
+<a href="{{ movie.imdb }}">IMDB</a>
+<iframe class="youtube-frame" width="640" height="360" ng-src="{{ movie.trailer }}" frameborder="0" allowfullscreen></iframe>
         <p class="movie-desctiption">{{ movie.tmdbOverview }}</p>
     </div>
 </div>

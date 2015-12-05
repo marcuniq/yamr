@@ -18,17 +18,6 @@ def get_tmdb_info(movie):
         return result
 
 
-def add_poster(movie, size='M'):
-    if size is 'M':
-        poster_url = 'http://image.tmdb.org/t/p/w185'
-    elif size is 'L':
-        poster_url = 'http://image.tmdb.org/t/p/w342'
-
-    movie['poster'] = poster_url + movie['tmdbPosterPath']
-
-    return movie
-
-
 def add_trailer(movie):
     tmdb_movie = tmdbsimple.Movies(movie['tmdbId'])
     youtube_videos = filter(lambda r: r['site'] == 'YouTube', tmdb_movie.videos()['results'])
@@ -37,10 +26,4 @@ def add_trailer(movie):
         youtube_url = 'https://www.youtube.com/embed/' + str(youtube_key)
         movie['trailer'] = youtube_url
 
-    return movie
-
-
-def add_poster_and_trailer(movie):
-    movie = add_poster(movie)
-    movie = add_trailer(movie)
     return movie

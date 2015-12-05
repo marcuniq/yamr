@@ -2,12 +2,15 @@
 
     <div class="row">
         <h1 class="col-md-3">Search</h1>
-        <input class="col-md-4 search" ng-model="query" ng-change="search()" placeholder="Movie title">
+        <input class="col-md-4 search" ng-model="query" ng-model-options='{ debounce: 500 }' ng-change="search()" placeholder="Movie title">
     </div>
     <div class="row" ng-repeat="row in searchResults | chunkBy: 3" >
         <div class="col-md-3 box" ng-repeat="movie in row">
             <h4><a href="#/movies/{{ movie.movieId }}">{{ movie.title }}</a></h4>
-            <img class="poster" ng-src="{{ movie.poster }}" ng-click="addRating(movie)"/>
+            <img class="poster" ng-src="{{ movie.poster }}"/>
+                        <div ng-controller="RatingsController">
+                <uib-rating ng-model="movie.rating" ng-change="addRating(movie)" max="max" readonly="isReadonly" on-hover="hoveringOver(value)" on-leave="overStar = null" titles="['one','two','three']" aria-labelledby="default-rating"></uib-rating>
+            </div>
         </div>
     </div>
 
@@ -15,7 +18,10 @@
     <div class="row" ng-repeat="row in topRated | orderBy: 'ratingAvg':true | chunkBy: 3" >
         <div class="col-md-3 box" ng-repeat="movie in row">
             <h4><a href="#/movies/{{ movie.movieId }}">{{ movie.title }}</a></h4>
-            <img class="poster" ng-src="{{ movie.poster }}" ng-click="addRating(movie)"/>
+            <img class="poster" ng-src="{{ movie.poster }}"/>
+                    <div ng-controller="RatingsController">
+                <uib-rating ng-model="movie.rating" ng-change="addRating(movie)" max="max" readonly="isReadonly" on-hover="hoveringOver(value)" on-leave="overStar = null" titles="['one','two','three']" aria-labelledby="default-rating"></uib-rating>
+            </div>
         </div>
     </div>
 
@@ -23,7 +29,10 @@
     <div class="row" ng-repeat="row in random | chunkBy: 3" >
         <div class="col-md-3 box" ng-repeat="movie in row">
             <h4><a href="#/movies/{{ movie.movieId }}">{{ movie.title }}</a></h4>
-            <img class="poster" ng-src="{{ movie.poster }}" ng-click="addRating(movie)"/>
+            <img class="poster" ng-src="{{ movie.poster }}"/>
+                    <div ng-controller="RatingsController">
+                <uib-rating ng-model="movie.rating" ng-change="addRating(movie)" max="max" readonly="isReadonly" on-hover="hoveringOver(value)" on-leave="overStar = null" titles="['one','two','three']" aria-labelledby="default-rating"></uib-rating>
+            </div>
         </div>
     </div>
 
