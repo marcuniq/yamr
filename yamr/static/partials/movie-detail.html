@@ -1,3 +1,7 @@
-<h4><a href="#/movie/{{ movie.movieId }}">{{ movie.title }}</a></h4>
-<iframe width="420" height="315" ng-src="{{ movie.trailer }}" frameborder="0" allowfullscreen></iframe>
-<p>{{ movie.tmdbOverview }}</p>
+<div class="container" id="movie-details">
+    <div class="row">
+        <h1>{{ movie.title }}</h1>
+        <iframe class="youtube-frame" width="640" height="360" ng-src="{{ movie.trailer }}" frameborder="0" allowfullscreen></iframe>
+        <p class="movie-desctiption">{{ movie.tmdbOverview }}</p>
+    </div>
+</div>

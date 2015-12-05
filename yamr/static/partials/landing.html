@@ -1,27 +1,29 @@
 <div class="container">
 
-    <h1>Search:</h1>
-    <input ng-model="query" ng-change="search()" placeholder="Movie title">
-    <div class="row" ng-repeat="row in searchResults | chunkBy: 5" >
-        <div class="col-md-2" ng-repeat="movie in row">
+    <div class="row">
+        <h1 class="col-md-3">Search</h1>
+        <input class="col-md-4 search" ng-model="query" ng-change="search()" placeholder="Movie title">
+    </div>
+    <div class="row" ng-repeat="row in searchResults | chunkBy: 3" >
+        <div class="col-md-3 box" ng-repeat="movie in row">
             <h4><a href="#/movies/{{ movie.movieId }}">{{ movie.title }}</a></h4>
-            <img ng-src="{{ movie.poster }}" ng-click="addRating(movie)"/>
+            <img class="poster" ng-src="{{ movie.poster }}" ng-click="addRating(movie)"/>
         </div>
     </div>
 
     <h1>Top rated</h1>
-    <div class="row" ng-repeat="row in topRated | orderBy: 'ratingAvg':true | chunkBy: 5" >
-        <div class="col-md-2" ng-repeat="movie in row">
+    <div class="row" ng-repeat="row in topRated | orderBy: 'ratingAvg':true | chunkBy: 3" >
+        <div class="col-md-3 box" ng-repeat="movie in row">
             <h4><a href="#/movies/{{ movie.movieId }}">{{ movie.title }}</a></h4>
-            <img ng-src="{{ movie.poster }}" ng-click="addRating(movie)"/>
+            <img class="poster" ng-src="{{ movie.poster }}" ng-click="addRating(movie)"/>
         </div>
     </div>
 
     <h1>Random</h1>
-    <div class="row" ng-repeat="row in random | chunkBy: 5" >
-        <div class="col-md-2" ng-repeat="movie in row">
+    <div class="row" ng-repeat="row in random | chunkBy: 3" >
+        <div class="col-md-3 box" ng-repeat="movie in row">
             <h4><a href="#/movies/{{ movie.movieId }}">{{ movie.title }}</a></h4>
-            <img ng-src="{{ movie.poster }}" ng-click="addRating(movie)"/>
+            <img class="poster" ng-src="{{ movie.poster }}" ng-click="addRating(movie)"/>
         </div>
     </div>
 

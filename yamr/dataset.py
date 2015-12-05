@@ -59,7 +59,7 @@ class OriginalDataset(object):
 
     def find_top_rated(self, min_count=50, top_k=20):
         if not top_k:
-            top_k = 20
+            top_k = 3
 
         top_rated = self.movies[self.movies['ratingCount'] > min_count].sort('ratingAvg', False)
 
@@ -68,7 +68,7 @@ class OriginalDataset(object):
 
     def get_random(self, top_k):
         if not top_k:
-            top_k = 20
+            top_k = 3
 
         sampled_movies = self.movies.sample(0.01)
 
@@ -77,7 +77,11 @@ class OriginalDataset(object):
 
     def search(self, query, top_k):
         if not top_k:
-            top_k = 20
+            top_k = 3
+
+        """not sure whether this is a good idea .."""
+        if query is '':
+            query = 'somestringthatmatchesnothing'
 
         query_re = '.*{}.*'.format(query)
         p = re.compile(query_re, re.IGNORECASE)

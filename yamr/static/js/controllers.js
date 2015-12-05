@@ -34,8 +34,8 @@ yamrControllers.controller('MovieDetailController', ['$scope', '$routeParams', '
     }
 ]);
 
-yamrControllers.controller('RatingsController', ['$scope', 'RatingService',
-    function($scope, ratingService){
+yamrControllers.controller('RatingsController', ['$scope', 'RatingService', 'RandomRest',
+    function($scope, ratingService, RandomRest){
         $scope.getRatings = function(){
             return ratingService.ratings();
         };
@@ -43,5 +43,8 @@ yamrControllers.controller('RatingsController', ['$scope', 'RatingService',
         $scope.addRating = function(movie) {
             ratingService.addRating(movie);
         };
+        RandomRest.get(function(response){
+            $scope.random = response.items;
+        });
     }
 ]);

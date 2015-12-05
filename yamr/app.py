@@ -50,6 +50,7 @@ def random():
 @app.route('/api/search')
 def search():
     query = str(request.args.get('query'))
+
     top_k = request.args.get('top_k')
     top_k = int(request.args.get('top_k')) if top_k else None
     movies = ds.search(query, top_k=top_k)
