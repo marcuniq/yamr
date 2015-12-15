@@ -18,5 +18,7 @@ Some Screenshots:
 
 
 Thanks to:
-* tmdb
-* movielens
+* [The Movie Database] (https://www.themoviedb.org)
+* Celia Oakley, [tmdbsimple] (https://github.com/celiao/tmdbsimple)
+* [University of Minnesota or the GroupLens Research Group] (http://files.grouplens.org/datasets/movielens/)
+* [Dato GraphLab Create](https://dato.com/products/create/)
