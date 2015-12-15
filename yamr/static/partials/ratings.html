@@ -1,13 +1,4 @@
 <div class="container">
-    <h1>Recommendations</h1>
-    <div class="row" ng-repeat="row in random | chunkBy: 3" >
-        <div class="col-md-3 box" ng-repeat="movie in row">
-            <h4><a href="#/movies/{{ movie.movieId }}">{{ movie.title }}</a></h4>
-            <img class="poster" ng-src="{{ movie.poster }}" ng-click="addRating(movie)"/><br>
-            <small style="font-size: 8px">pseudo-generated random recommendations for preview purposes</small>
-        </div>
-    </div>
-
     <h1>Ratings</h1>
     <div class="row" ng-repeat="row in getRatingsWithPoster('M') | orderBy: 'ratingTimestamp':false | chunkBy: 3" >
         <div class="col-md-3 box" ng-repeat="movie in row">
