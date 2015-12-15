@@ -11,9 +11,9 @@ My learnings:
 We have used Apiary API blueprint to document our API: [docs.yamr.apiary.io](http://docs.yamr.apiary.io)
 
 Some Screenshots:
-![Landing](/screenshots/landing.jpg?raw=true)
-![Rated Movies](/screenshots/rated movies.jpg?raw=true)
-![Movie Detail](/screenshots/movie detail.jpg?raw=true)
+![Home](/screenshots/home.jpg?raw=true)
+![Rated Movies](/screenshots/ratings.jpg?raw=true)
+![Movie Detail](/screenshots/movie-detail.jpg?raw=true)
 ![Recommendations](/screenshots/recommendations.jpg?raw=true)
 
 
